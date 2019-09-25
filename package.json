@@ -1,0 +1,28 @@
+{
+  "name": "front-pdf",
+  "version": "0.0.1",
+  "description": "Application for creating PDF from frontend assets",
+  "main": "src/index.js",
+  "author": "Alex Chernenko <ca@nullgr.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+git@172.16.100.20:Kazimirkas/front-pdf.git"
+  },
+  "keywords": [
+    "pdf"
+  ],
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-slow-down": "^1.3.1",
+    "generic-pool": "^3.7.1",
+    "puppeteer": "^1.20.0",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "cross-env": "^6.0.0",
+    "prettier": "^1.18.2",
+    "rimraf": "^3.0.0"
+  }
+}
