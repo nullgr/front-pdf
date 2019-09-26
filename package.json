@@ -7,7 +7,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+git@172.16.100.20:Kazimirkas/front-pdf.git"
+    "url": "git+https://github.com/nullgr/front-pdf"
   },
   "keywords": [
     "pdf"
