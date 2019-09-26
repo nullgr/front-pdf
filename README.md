@@ -5,7 +5,7 @@
 - install node and npm
 - execute `npm install`
 - execute `npm run start` it will run the service (on 5000 port by default)
-- execute a POST request on http://localhost:5000/createReport, send your data in body
+- execute a POST request on http://localhost:{port}/createReport, send your data in body
 - each page will have its unique id, like this `http://localhost:{port}?&id=${id}`
 - your static assets (frontend build) should contain an ajax request with the id url parameter on `/json?id={id}`, they will recieve all the required data, that was sent in body request
 - after your front-end rendering is complete, you should add a `RENDERED_CHART_CLASS` classname, so the service will now, that it can make a pdf from your page
