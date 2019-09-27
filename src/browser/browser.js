@@ -1,6 +1,6 @@
 /**
  * Browser entity layer for creating pdf reports
- * with a browsert tabs pool for opitmisation
+ * with a browser tabs pool for optimisation
  * @author Oleksander Chernenko <ca@nullgr.com>
  */
 function buildMakeBrowser({ launch, createPool, destroy, usePage, releasePage }) {
