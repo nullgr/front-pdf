@@ -10,8 +10,8 @@ function buildMakeBrowser({ launch, createPool, destroy, usePage, releasePage })
     return Object.freeze({
       getBrowser: () => browserInstance,
       getPool: () => poolInstance,
-      launch: async () => {
-        browserInstance = await launch({ layoutConfig });
+      launch: async ({ headless }) => {
+        browserInstance = await launch({ headless, layoutConfig });
         poolInstance = await createPool({ browserInstance, layoutConfig });
       },
       destroy: async () => {

@@ -17,21 +17,25 @@ const speedLimiter = slowDown({
   maxDelayMs: 10000 // max 10 seconds delay
 });
 
-async function startService({ paths, layoutConfig, port, payloadMock } = {}) {
+async function startService({ templates, layoutConfig, port, payloadMock, headless } = {}) {
   const requests = {};
   const browser = makeBrowser({ layoutConfig });
-  await browser.launch();
-  const reportGenerator = makeReportGenerator({ paths, layoutConfig, browser, port });
+  await browser.launch({ headless });
+  const reportGenerator = makeReportGenerator({ layoutConfig, browser, port });
 
-  app.use(express.static(paths.static));
+  templates.forEach(function(template) {
+    app.use(`/root/${template.name}/`, express.static(template.static));
+  });
+
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.post('/createReport', speedLimiter, async function(req, res, next) {
+  app.post('/createReport/:templateId', speedLimiter, async function(req, res, next) {
     try {
+      const template = req.params.templateId;
       const id = uuidv1();
       requests[id] = req.body;
-      const buffer = await reportGenerator.createReport(id);
+      const buffer = await reportGenerator.createReport(template, id);
       res.setHeader('Content-Length', Buffer.byteLength(buffer));
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=report.pdf`);
@@ -42,11 +46,10 @@ async function startService({ paths, layoutConfig, port, payloadMock } = {}) {
       next(e);
     }
   });
-
-  // The "catchall" handler: for any request that doesn't
-  // match one above, send back React's index.html file.
-  app.get('/', (req, res) => {
-    res.sendFile(paths.index);
+  templates.forEach(function(template) {
+    app.get(`/root/${template.name}/`, (req, res) => {
+      res.sendFile(template.index);
+    });
   });
 
   app.get('/json', function(req, res) {
@@ -57,6 +60,12 @@ async function startService({ paths, layoutConfig, port, payloadMock } = {}) {
 
     const { id } = req.query;
     res.send(requests[id]);
+  });
+
+  // redirect to template sources
+  app.get(/^\/(?!root).*/, (req, res) => {
+    const url = new URL(req.header('Referer'));
+    res.redirect(url.pathname + req.path);
   });
 
   const appPort = port || process.env.PORT || 5000;
