@@ -23,6 +23,7 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
   await browser.launch({ headless });
   const reportGenerator = makeReportGenerator({ layoutConfig, browser, port });
 
+  // serve assets for each template on /root/{template.name}/{asset} url
   templates.forEach(function(template) {
     app.use(`/root/${template.name}/`, express.static(template.static));
   });
@@ -46,12 +47,15 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
       next(e);
     }
   });
+
+  // serve index.html for each template
   templates.forEach(function(template) {
     app.get(`/root/${template.name}/`, (req, res) => {
       res.sendFile(template.index);
     });
   });
 
+  // a payload data servise
   app.get('/json', function(req, res) {
     // mock the json response in development mode
     if (DEVELOPMENT && Object.keys(payloadMock).length) {
@@ -62,7 +66,8 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
     res.send(requests[id]);
   });
 
-  // redirect to template sources
+  // redirect all asset requests to their destinations
+  // /{asset} --> /root/{template.name}/{asset}
   app.get(/^\/(?!root).*/, (req, res) => {
     const url = new URL(req.header('Referer'));
     res.redirect(url.pathname + req.path);
