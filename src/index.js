@@ -1,14 +1,12 @@
 const express = require('express');
 const slowDown = require('express-slow-down');
 const bodyParser = require('body-parser');
-const uuidv1 = require('uuid/v1');
 
+const uuidv1 = require('uuid/v1');
 const makeBrowser = require('./browser');
 const makeReportGenerator = require('./reportGenerator');
 
 const DEVELOPMENT = process.env.NODE_ENV === 'development';
-
-const app = express();
 
 const speedLimiter = slowDown({
   windowMs: 10000, // 10 sec
@@ -18,6 +16,7 @@ const speedLimiter = slowDown({
 });
 
 async function startService({ templates, layoutConfig, port, payloadMock, headless } = {}) {
+  const app = express();
   const requests = {};
   const browser = makeBrowser({ layoutConfig });
   await browser.launch({ headless });
@@ -78,5 +77,17 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
 
   console.log(`Reports generator listening on ${appPort}`);
 }
+
+const sigs = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
+sigs.forEach(sig => {
+  process.on(sig, () => {
+    // implementation of browser closing on Ctrl + C,
+    // it works even without calling browser.destroy() O_o
+    // tested in headless off mode
+    // TODO investigate this in future
+    console.log(' - all service related apps are terminated');
+    process.exit(0);
+  });
+});
 
 module.exports = startService;
