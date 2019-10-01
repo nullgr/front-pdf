@@ -1,4 +1,7 @@
-async function createPdf(page, pageNumbers, PAGE_CLASS) {
+const DEFAULT_PAGE_SCALE = 0.775;
+
+async function createPdf(page, pageNumbers, PAGE_CLASS, PAGE_SCALE) {
+  const scale = PAGE_SCALE ? PAGE_SCALE : DEFAULT_PAGE_SCALE;
   for (const pageNumber of pageNumbers) {
     await page.evaluate(
       (pageNumber, PAGE_CLASS) => {
@@ -8,7 +11,7 @@ async function createPdf(page, pageNumbers, PAGE_CLASS) {
       PAGE_CLASS
     );
     const pdf = await page.pdf({
-      scale: 0.755,
+      scale,
       pageNumber: pageNumber,
       totalPages: pageNumbers.length,
       format: 'A4'
@@ -31,7 +34,7 @@ function makeReportGenerator({ layoutConfig, browser, port }) {
       }
       return pageNumbers;
     }, layoutConfig.PAGE_CLASS);
-    const pdf = await createPdf(page, pageNumbers, layoutConfig.PAGE_CLASS);
+    const pdf = await createPdf(page, pageNumbers, layoutConfig.PAGE_CLASS, layoutConfig.PAGE_SCALE);
     await browser.releasePage(page);
     return pdf;
   }
