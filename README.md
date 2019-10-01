@@ -1,6 +1,6 @@
 # NullGravity front-pdf package
 
-*front-pdf* is a self-hosted service that uses front-end layouts for PDF export. 
+_front-pdf_ is a self-hosted service that uses front-end layouts for PDF export.
 You can create pdf oriented layouts using any front-end technology that you like. Just prepare the front-end build and configure the service.
 
 ## Conventions
@@ -28,10 +28,19 @@ const startService = require('front-pdf');
 
 // start the service
 startService({
-  paths: {
-    static: path.join(__dirname, '/../static'), // place here your front-end build
-    index: path.join(__dirname, '/../static/index.html')
-  },
+  templates: [
+    {
+      name: 'template1',
+      static: path.join(__dirname, '/../static/template1'),
+      index: path.join(__dirname, '/../static/template1/index.html')
+    },
+    {
+      name: 'template2',
+      static: path.join(__dirname, '/../static/template2'),
+      index: path.join(__dirname, '/../static/template2/index.html')
+    }
+  ],
+  payloadMock: mock,
   port: 5000,
   layoutConfig: {
     PAGE_HORIZONTAL_PADDING: 42.7,
@@ -40,6 +49,7 @@ startService({
     PAGE_INNER_HEIGHT: 1704,
     PAGE_CLASS: 'pdf-page',
     RENDERED_CHART_CLASS: 'analysis-chart-rendered'
-  }
+  },
+  headless: true
 });
 ```

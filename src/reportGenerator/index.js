@@ -18,9 +18,9 @@ async function createPdf(page, pageNumbers, PAGE_CLASS) {
 }
 
 function makeReportGenerator({ layoutConfig, browser, port }) {
-  async function createReport(id) {
+  async function createReport(templateName, id) {
     const page = await browser.usePage();
-    await page.goto(`http://localhost:${port}?&id=${id}`);
+    await page.goto(`http://localhost:${port}/root/${templateName}?&id=${id}`);
     await page.waitForSelector(`.${layoutConfig.PAGE_CLASS}`);
     await page.waitForSelector(`.${layoutConfig.RENDERED_CHART_CLASS}`);
     const pageNumbers = await page.evaluate(PAGE_CLASS => {
@@ -37,7 +37,7 @@ function makeReportGenerator({ layoutConfig, browser, port }) {
   }
 
   return Object.freeze({
-    createReport: id => createReport(id)
+    createReport: (...args) => createReport(...args)
   });
 }
 

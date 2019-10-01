@@ -2,15 +2,17 @@ const puppeteer = require('puppeteer');
 const genericPool = require('generic-pool');
 const buildMakeBrowser = require('./browser');
 
-function launch({ layoutConfig }) {
+function launch({ layoutConfig, headless = true }) {
   const { width, height } = getDimentions(layoutConfig);
   const config =
     process.platform === 'linux'
       ? {
+          headless,
           executablePath: '/usr/bin/chromium-browser',
           args: [`--window-size=${width},${height}`]
         }
       : {
+          headless,
           args: [`--window-size=${width},${height}`]
         };
   return puppeteer.launch(config);
