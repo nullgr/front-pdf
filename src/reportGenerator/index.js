@@ -1,7 +1,6 @@
 const DEFAULT_PAGE_SCALE = 0.775;
 
-async function createPdf(page, pageNumbers, PAGE_CLASS, PAGE_SCALE) {
-  const scale = PAGE_SCALE ? PAGE_SCALE : DEFAULT_PAGE_SCALE;
+async function createPdf(page, pageNumbers, PAGE_CLASS, PAGE_SCALE = DEFAULT_PAGE_SCALE) {
   for (const pageNumber of pageNumbers) {
     await page.evaluate(
       (pageNumber, PAGE_CLASS) => {
@@ -11,7 +10,7 @@ async function createPdf(page, pageNumbers, PAGE_CLASS, PAGE_SCALE) {
       PAGE_CLASS
     );
     const pdf = await page.pdf({
-      scale,
+      scale: PAGE_SCALE,
       pageNumber: pageNumber,
       totalPages: pageNumbers.length,
       format: 'A4'
