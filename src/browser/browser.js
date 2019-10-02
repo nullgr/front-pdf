@@ -15,7 +15,7 @@ function buildMakeBrowser({ launch, createPool, destroy, usePage, releasePage })
         poolInstance = await createPool({ browserInstance, layoutConfig });
       },
       destroy: async () => {
-        browserInstance = await destroy();
+        await destroy(browserInstance);
       },
       usePage: async () => {
         const page = await usePage({ poolInstance });
