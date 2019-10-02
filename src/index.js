@@ -3,10 +3,11 @@ const express = require('express');
 const slowDown = require('express-slow-down');
 const bodyParser = require('body-parser');
 const { createTerminus } = require('@godaddy/terminus');
+var shortid = require('shortid');
 
-const uuidv1 = require('uuid/v1');
 const makeBrowser = require('./browser');
 const makeReportGenerator = require('./reportGenerator');
+const { startTimeLog } = require('./utils');
 
 const DEVELOPMENT = process.env.NODE_ENV === 'development';
 
@@ -20,7 +21,7 @@ const speedLimiter = slowDown({
   maxDelayMs: 10000 // max 10 seconds delay
 });
 
-async function startService({ templates, layoutConfig, port, payloadMock, headless } = {}) {
+async function startService({ templates, layoutConfig, port, payloadMock, headless, debugMode } = {}) {
   const app = express();
   const requests = {};
   browser = makeBrowser({ layoutConfig });
@@ -38,7 +39,11 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
   app.post('/createReport/:templateId', speedLimiter, async function(req, res, next) {
     try {
       const template = req.params.templateId;
-      const id = uuidv1();
+      const id = shortid.generate();
+      let endTimeLog;
+      if (debugMode) {
+        endTimeLog = startTimeLog(id);
+      }
       requests[id] = req.body;
       const buffer = await reportGenerator.createReport(template, id);
       res.setHeader('Content-Length', Buffer.byteLength(buffer));
@@ -46,7 +51,7 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
       res.setHeader('Content-Disposition', `attachment; filename=report.pdf`);
       await res.send(buffer);
       delete requests[id];
-      console.log(`Report ${id} is generated!`);
+      debugMode && endTimeLog();
     } catch (e) {
       next(e);
     }
