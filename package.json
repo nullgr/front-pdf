@@ -26,7 +26,9 @@
     "rimraf": "^3.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=production && node index.js"
+    "test-request": "tests/testRequests.sh",
+    "test-service": "cross-env NODE_ENV=production node tests/index.js",
+    "test-service:dev": "cross-env NODE_ENV=development node tests/index.js",
+    "start": " && node index.js"
   }
 }
