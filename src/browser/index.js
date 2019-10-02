@@ -4,22 +4,24 @@ const buildMakeBrowser = require('./browser');
 
 function launch({ layoutConfig, headless = true }) {
   const { width, height } = getDimentions(layoutConfig);
+  const standartOptions = {
+    headless,
+    handleSIGINT: false,
+    args: [`--window-size=${width},${height}`]
+  };
   const config =
     process.platform === 'linux'
       ? {
-          headless,
-          executablePath: '/usr/bin/chromium-browser',
+          ...standartOptions,
           args: [`--window-size=${width},${height}`]
         }
-      : {
-          headless,
-          args: [`--window-size=${width},${height}`]
-        };
+      : standartOptions;
   return puppeteer.launch(config);
 }
 
-function destroy() {
-  return puppeteer.close();
+async function destroy(browser) {
+  await browser.close();
+  console.log(' - browser closed');
 }
 
 function createPool({ layoutConfig, browserInstance }) {
