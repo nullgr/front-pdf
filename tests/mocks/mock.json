@@ -15,5 +15,6 @@
   "chart3": {
     "columns": [["Blue", 30], ["Orange", 120]],
     "type": "donut"
-  }
+  },
+  "test": "Test-css"
 }

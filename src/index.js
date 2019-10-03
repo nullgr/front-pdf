@@ -21,12 +21,12 @@ const speedLimiter = slowDown({
   maxDelayMs: 10000 // max 10 seconds delay
 });
 
-async function startService({ templates, layoutConfig, port, payloadMock, headless, debugMode } = {}) {
+async function startService({ templates, browserConfig, firstPageViewport, port, payloadMock, debugMode } = {}) {
   const app = express();
   const requests = {};
-  browser = makeBrowser({ layoutConfig });
-  await browser.launch({ headless });
-  const reportGenerator = makeReportGenerator({ layoutConfig, browser, port });
+  browser = makeBrowser({ browserConfig, firstPageViewport });
+  await browser.launch();
+  const reportGenerator = makeReportGenerator({ browser, port });
 
   // serve assets for each template on /root/{template.name}/{asset} url
   templates.forEach(function(template) {
@@ -38,7 +38,11 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
 
   app.post('/createReport/:templateId', speedLimiter, async function(req, res, next) {
     try {
-      const template = req.params.templateId;
+      const templateName = req.params.templateId;
+      const template = templates.find(t => t.name === templateName);
+      if (!template) {
+        throw new Error(`Template '${templateName}' does not exist!`);
+      }
       const id = shortid.generate();
       let endTimeLog;
       if (debugMode) {
@@ -53,6 +57,7 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
       delete requests[id];
       debugMode && endTimeLog();
     } catch (e) {
+      console.error('\x1b[31m');
       next(e);
     }
   });

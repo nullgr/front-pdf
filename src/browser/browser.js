@@ -4,15 +4,15 @@
  * @author Oleksander Chernenko <ca@nullgr.com>
  */
 function buildMakeBrowser({ launch, createPool, destroy, usePage, releasePage }) {
-  return function makeBrowser({ layoutConfig } = {}) {
+  return function makeBrowser({ browserConfig, firstPageViewport } = {}) {
     let browserInstance;
     let poolInstance;
     return Object.freeze({
       getBrowser: () => browserInstance,
       getPool: () => poolInstance,
-      launch: async ({ headless }) => {
-        browserInstance = await launch({ headless, layoutConfig });
-        poolInstance = await createPool({ browserInstance, layoutConfig });
+      launch: async () => {
+        browserInstance = await launch({ browserConfig });
+        poolInstance = await createPool({ browserInstance, firstPageViewport });
       },
       destroy: async () => {
         await destroy(browserInstance);
