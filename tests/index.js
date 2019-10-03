@@ -32,5 +32,6 @@ startService({
     PAGE_CLASS: 'pdf-page',
     RENDERED_CHART_CLASS: 'rendered'
   },
+  debugMode: true,
   headless: true
 });

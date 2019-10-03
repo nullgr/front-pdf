@@ -1,14 +1,18 @@
+const http = require('http');
 const express = require('express');
 const slowDown = require('express-slow-down');
 const bodyParser = require('body-parser');
-const uuidv1 = require('uuid/v1');
+const { createTerminus } = require('@godaddy/terminus');
+var shortid = require('shortid');
 
 const makeBrowser = require('./browser');
 const makeReportGenerator = require('./reportGenerator');
+const { startTimeLog } = require('./utils');
 
 const DEVELOPMENT = process.env.NODE_ENV === 'development';
 
-const app = express();
+let server;
+let browser;
 
 const speedLimiter = slowDown({
   windowMs: 10000, // 10 sec
@@ -17,9 +21,10 @@ const speedLimiter = slowDown({
   maxDelayMs: 10000 // max 10 seconds delay
 });
 
-async function startService({ templates, layoutConfig, port, payloadMock, headless } = {}) {
+async function startService({ templates, layoutConfig, port, payloadMock, headless, debugMode } = {}) {
+  const app = express();
   const requests = {};
-  const browser = makeBrowser({ layoutConfig });
+  browser = makeBrowser({ layoutConfig });
   await browser.launch({ headless });
   const reportGenerator = makeReportGenerator({ layoutConfig, browser, port });
 
@@ -34,7 +39,11 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
   app.post('/createReport/:templateId', speedLimiter, async function(req, res, next) {
     try {
       const template = req.params.templateId;
-      const id = uuidv1();
+      const id = shortid.generate();
+      let endTimeLog;
+      if (debugMode) {
+        endTimeLog = startTimeLog(id);
+      }
       requests[id] = req.body;
       const buffer = await reportGenerator.createReport(template, id);
       res.setHeader('Content-Length', Buffer.byteLength(buffer));
@@ -42,7 +51,7 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
       res.setHeader('Content-Disposition', `attachment; filename=report.pdf`);
       await res.send(buffer);
       delete requests[id];
-      console.log(`Report ${id} is generated!`);
+      debugMode && endTimeLog();
     } catch (e) {
       next(e);
     }
@@ -74,8 +83,22 @@ async function startService({ templates, layoutConfig, port, payloadMock, headle
   });
 
   const appPort = port || process.env.PORT || 5000;
-  app.listen(appPort);
 
+  server = http.createServer(app);
+
+  function onShutDown() {
+    return Promise.all([browser.destroy()]);
+  }
+
+  // gracefull shutdown
+  // https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html
+  createTerminus(server, {
+    signal: 'SIGINT', // shutDown signal
+    timeout: 1000,
+    onSignal: onShutDown
+  });
+
+  server.listen(appPort);
   console.log(`Reports generator listening on ${appPort}`);
 }
 
