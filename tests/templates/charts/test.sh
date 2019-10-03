@@ -1,0 +1,3 @@
+curl -d '{"columns": [["Lorem", 50, 200, 250, 300, 150, 250], ["Ipsum", 50, 100, 60, 40, 250, 300]]}' -H "Content-Type: application/json" -X POST http://localhost:5000/createReport/c3-chart --create-dirs -o tests/output/charts/c3-chart.pdf &
+curl -d '{"chart1": {"columns": [["Area 1", 300, 350, 300, 0, 0, 0], ["Area 2", 130, 100, 140, 200, 150, 50]],"types": {"Area 1": "area","Area 2": "area-spline"}},"chart2": {"columns": [["Blue bars", 30, 200, 100, 400, 150, 250], ["Orange bars", 130, 100, 140, 200, 150, 50]],"type": "bar"},"chart3": {"columns": [["Blue", 30], ["Orange", 120]],"type": "donut"}}' -H "Content-Type: application/json" -X POST http://localhost:5000/createReport/c3-multiple-charts --create-dirs -o tests/output/charts/c3-multiple-charts.pdf 
+

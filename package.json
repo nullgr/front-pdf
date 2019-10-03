@@ -27,10 +27,10 @@
     "rimraf": "^3.0.0"
   },
   "scripts": {
-    "test-request": "tests/testRequests.sh",
-    "test-request:dimentions": "tests/dimentions/test.sh",
-    "test-service": "cross-env NODE_ENV=production node tests/index.js",
-    "test-service:dev": "cross-env NODE_ENV=development node tests/index.js",
+    "test-request:charts": "tests/templates/charts/test.sh",
+    "test-request:css-media-print": "tests/templates/css-media-print/test.sh",
+    "test-service": "cross-env NODE_ENV=production node tests/runner.js",
+    "test-service:dev": "cross-env NODE_ENV=development node tests/runner.js",
     "start": " && node index.js"
   }
 }
