@@ -13,7 +13,14 @@ function launch({ layoutConfig, headless = true }) {
     process.platform === 'linux'
       ? {
           ...standartOptions,
-          args: [`--window-size=${width},${height}`]
+          executablePath: '/usr/bin/chromium-browser',
+          args: [
+            `--window-size=${width},${height}`,
+            `--no-sandbox`,
+            `--headless`,
+            `--disable-gpu`,
+            `--disable-dev-shm-usage`
+          ]
         }
       : standartOptions;
   return puppeteer.launch(config);
