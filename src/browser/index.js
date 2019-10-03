@@ -2,28 +2,11 @@ const puppeteer = require('puppeteer');
 const genericPool = require('generic-pool');
 const buildMakeBrowser = require('./browser');
 
-function launch({ layoutConfig, headless = true }) {
-  const { width, height } = getDimentions(layoutConfig);
-  const standartOptions = {
-    headless,
-    handleSIGINT: false,
-    args: [`--window-size=${width},${height}`]
-  };
-  const config =
-    process.platform === 'linux'
-      ? {
-          ...standartOptions,
-          executablePath: '/usr/bin/chromium-browser',
-          args: [
-            `--window-size=${width},${height}`,
-            `--no-sandbox`,
-            `--headless`,
-            `--disable-gpu`,
-            `--disable-dev-shm-usage`
-          ]
-        }
-      : standartOptions;
-  return puppeteer.launch(config);
+function launch({ browserConfig }) {
+  return puppeteer.launch({
+    ...browserConfig,
+    handleSIGINT: false // force to disable handleSIGINT
+  });
 }
 
 async function destroy(browser) {
@@ -31,15 +14,16 @@ async function destroy(browser) {
   console.log(' - browser closed');
 }
 
-function createPool({ layoutConfig, browserInstance }) {
-  const { width, height } = getDimentions(layoutConfig);
+function createPool({ firstPageViewport, browserInstance }) {
   const pageFacrory = {
     create: async function() {
       const page = await browserInstance.newPage();
-      page.setViewport({
-        width: width,
-        height: height
-      });
+      if (firstPageViewport) {
+        page.setViewport({
+          width: width,
+          height: height
+        });
+      }
       return page;
     },
     destroy: function(page) {
@@ -61,14 +45,6 @@ async function usePage({ poolInstance }) {
 
 async function releasePage({ poolInstance, page }) {
   await poolInstance.release(page);
-}
-
-function getDimentions(config) {
-  const { PAGE_HORIZONTAL_PADDING, PAGE_VERTICAL_PADDING, PAGE_INNER_WIDTH, PAGE_INNER_HEIGHT } = config;
-  return {
-    width: Math.ceil(PAGE_HORIZONTAL_PADDING + PAGE_INNER_WIDTH + PAGE_HORIZONTAL_PADDING),
-    height: Math.ceil(PAGE_VERTICAL_PADDING + PAGE_INNER_HEIGHT + PAGE_VERTICAL_PADDING)
-  };
 }
 
 const makeBrowser = buildMakeBrowser({
