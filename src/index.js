@@ -21,12 +21,12 @@ const speedLimiter = slowDown({
   maxDelayMs: 10000 // max 10 seconds delay
 });
 
-async function startService({ templates, browserConfig, port, payloadMock, headless, debugMode } = {}) {
+async function startService({ templates, browserConfig, firstPageViewport, port, payloadMock, debugMode } = {}) {
   const app = express();
   const requests = {};
-  browser = makeBrowser({ browserConfig });
-  await browser.launch({ headless });
-  const reportGenerator = makeReportGenerator({ browserConfig, browser, port });
+  browser = makeBrowser({ browserConfig, firstPageViewport });
+  await browser.launch();
+  const reportGenerator = makeReportGenerator({ browser, port });
 
   // serve assets for each template on /root/{template.name}/{asset} url
   templates.forEach(function(template) {

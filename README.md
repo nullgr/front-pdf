@@ -5,8 +5,8 @@ You can create pdf oriented layouts using any front-end technology that you like
 
 ## Conventions
 
-Your front-end build should contain wrapper with `PAGE_CLASS`, each `page` should have its fixed dimentions.
-You should tell the service, when your renedering process is finished for all pages by adding the `RENDERED_CHART_CLASS` in the end.
+Your front-end build should contain wrapper with `pageClass`, each `page` should have its fixed dimentions.
+You should tell the service, when your renedering process is finished for all pages by adding the `renderedClass` in the end.
 We are working on improvement of this conventions in future.
 This is a draft version of the package.
 
@@ -18,7 +18,7 @@ This is a draft version of the package.
 - execute a POST request on http://localhost:{port}/createReport, send your data in body
 - each page will have its unique id, like this `http://localhost:{port}?&id=${id}`
 - your static assets (frontend build) should contain an ajax request with the id url parameter on `/json?id={id}`, they will recieve all the required data, that was sent in body request
-- after your front-end rendering is complete, you should add a `RENDERED_CHART_CLASS` classname, so the service will now, that it can make a pdf from your page
+- after your front-end rendering is complete, you should add a `renderedClass` classname, so the service will now, that it can make a pdf from your page
 
 ### example
 
@@ -26,30 +26,35 @@ This is a draft version of the package.
 const path = require('path');
 const startService = require('front-pdf');
 
-// start the service
+// https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions
+const browserConfig = {
+  headless: true
+};
+
 startService({
   templates: [
     {
       name: 'template1',
-      static: path.join(__dirname, '/../static/template1'),
-      index: path.join(__dirname, '/../static/template1/index.html')
+      static: path.join(__dirname, './template1'),
+      index: path.join(__dirname, './template1/index.html'),
+      pageConfig: {
+        pageClass: 'pdf-page',
+        renderedClass: 'rendered'
+      }
     },
     {
-      name: 'template2',
-      static: path.join(__dirname, '/../static/template2'),
-      index: path.join(__dirname, '/../static/template2/index.html')
+      name: 'template-css',
+      static: path.join(__dirname, './template-css'),
+      index: path.join(__dirname, './template-css/index.html'),
+      pageConfig: {
+        pageClass: 'pdf-page',
+        renderedClass: 'rendered',
+        preferCSSPageSize: true
+      }
     }
   ],
-  payloadMock: mock,
+  browserConfig,
   port: 5000,
-  layoutConfig: {
-    PAGE_HORIZONTAL_PADDING: 42.7,
-    PAGE_VERTICAL_PADDING: 42.7,
-    PAGE_INNER_WIDTH: 1180,
-    PAGE_INNER_HEIGHT: 1704,
-    PAGE_CLASS: 'pdf-page',
-    RENDERED_CHART_CLASS: 'analysis-chart-rendered'
-  },
-  headless: true
+  debugMode: true
 });
 ```
