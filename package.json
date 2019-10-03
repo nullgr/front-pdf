@@ -1,6 +1,6 @@
 {
   "name": "front-pdf",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Application for creating PDF from frontend assets",
   "main": "src/index.js",
   "author": "Alex Chernenko <ca@nullgr.com>",
