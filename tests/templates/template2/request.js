@@ -2,9 +2,6 @@
 const searchParams = new URLSearchParams(location.search);
 const id = decodeURI(searchParams.get('id'));
 
-// get the DOM node to bind chart to
-const container = document.getElementById('chart');
-
 // fetch JSON from the endpoint based on UUID
 fetch(`/json?id=${id}`)
   .then(response => response.json())
@@ -19,6 +16,6 @@ fetch(`/json?id=${id}`)
       },
 
       // when the chart has finished rendering, add the .rendered class to the chart container
-      onrendered: container.classList.add('rendered')
+      onrendered: document.getElementById('chart').classList.add('rendered')
     });
   });
