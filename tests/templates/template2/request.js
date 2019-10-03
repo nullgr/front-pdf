@@ -15,7 +15,7 @@ fetch(`/json?id=${id}`)
         duration: 0
       },
 
-      // when the chart has finished rendering, add the .rendered class to the chart container
+      // when the chart has finished rendering, add the renderedClass class to the chart container
       onrendered: document.getElementById('chart').classList.add('rendered')
     });
   });

@@ -6,14 +6,17 @@ const id = decodeURI(searchParams.get('id'));
 fetch(`/json?id=${id}`)
   .then(response => response.json())
 
-  // generate a chart based on the response data
+  // generate charts based on the response data
   .then(({ chart1, chart2, chart3 }) => {
     c3.generate({
       bindto: '#chart1',
       data: chart1,
       transition: {
         duration: 0
-      }
+      },
+
+      //after each chart is rendered add renderedClass class to it's container
+      onrendered: document.getElementById('chart1').classList.add('rendered')
     });
 
     c3.generate({
@@ -21,7 +24,8 @@ fetch(`/json?id=${id}`)
       data: chart2,
       transition: {
         duration: 0
-      }
+      },
+      onrendered: document.getElementById('chart2').classList.add('rendered')
     });
 
     c3.generate({
@@ -30,8 +34,6 @@ fetch(`/json?id=${id}`)
       transition: {
         duration: 0
       },
-
-      // when all the charts have finished rendering, add the .rendered class to the chart container
-      onrendered: document.getElementById('container').classList.add('rendered')
+      onrendered: document.getElementById('chart3').classList.add('rendered')
     });
   });
