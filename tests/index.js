@@ -8,8 +8,18 @@ startService({
   templates: [
     {
       name: 'template1',
-      static: path.join(__dirname, './template1'),
-      index: path.join(__dirname, './template1/index.html')
+      static: path.join(__dirname, './templates/template1'),
+      index: path.join(__dirname, './templates/template1/index.html')
+    },
+    {
+      name: 'template2',
+      static: path.join(__dirname, './templates/template2'),
+      index: path.join(__dirname, './templates/template2/index.html')
+    },
+    {
+      name: 'template3',
+      static: path.join(__dirname, './templates/template3'),
+      index: path.join(__dirname, './templates/template3/index.html')
     }
   ],
   payloadMock: mock,
