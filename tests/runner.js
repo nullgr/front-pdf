@@ -19,40 +19,30 @@ const browserConfig =
 startService({
   templates: [
     {
-      name: 'template1',
-      static: path.join(__dirname, './templates/template1'),
-      index: path.join(__dirname, './templates/template1/index.html'),
+      name: 'c3-chart',
+      static: path.join(__dirname, './templates/charts/c3-chart'),
+      index: path.join(__dirname, './templates/charts/c3-chart/index.html'),
       pageConfig: {
         pageClass: 'pdf-page',
         renderedClass: 'rendered'
       }
     },
     {
-      name: 'template2',
-      static: path.join(__dirname, './templates/template2'),
-      index: path.join(__dirname, './templates/template2/index.html'),
+      name: 'c3-multiple-charts',
+      static: path.join(__dirname, './templates/charts/c3-multiple-charts'),
+      index: path.join(__dirname, './templates/charts/c3-multiple-charts/index.html'),
       pageConfig: {
         pageClass: 'pdf-page',
         renderedClass: 'rendered'
       }
     },
     {
-      name: 'template3',
-      static: path.join(__dirname, './templates/template3'),
-      index: path.join(__dirname, './templates/template3/index.html'),
+      name: 'min-page',
+      static: path.join(__dirname, './templates/css-media-print/min-page'),
+      index: path.join(__dirname, './templates/css-media-print/min-page/index.html'),
       pageConfig: {
         pageClass: 'pdf-page',
         renderedClass: 'rendered'
-      }
-    },
-    {
-      name: 'template-css',
-      static: path.join(__dirname, './templates/template-css'),
-      index: path.join(__dirname, './templates/template-css/index.html'),
-      pageConfig: {
-        pageClass: 'pdf-page',
-        renderedClass: 'rendered',
-        preferCSSPageSize: true
       }
     }
   ],
