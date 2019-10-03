@@ -1,6 +1,6 @@
 const DEFAULT_PAGE_SCALE = 0.775;
 
-async function createPdf(page, pageNumbers, PAGE_CLASS, PAGE_SCALE = DEFAULT_PAGE_SCALE) {
+async function createPdf({ page, pageNumbers, PAGE_CLASS, PAGE_SCALE, preferCSSPageSize } = {}) {
   for (const pageNumber of pageNumbers) {
     await page.evaluate(
       (pageNumber, PAGE_CLASS) => {
@@ -10,19 +10,20 @@ async function createPdf(page, pageNumbers, PAGE_CLASS, PAGE_SCALE = DEFAULT_PAG
       PAGE_CLASS
     );
     const pdf = await page.pdf({
-      scale: PAGE_SCALE,
+      scale: !preferCSSPageSize ? PAGE_SCALE : undefined,
       pageNumber: pageNumber,
       totalPages: pageNumbers.length,
-      format: 'A4'
+      preferCSSPageSize,
+      format: !preferCSSPageSize ? 'A4' : undefined
     });
     return pdf;
   }
 }
 
 function makeReportGenerator({ layoutConfig, browser, port }) {
-  async function createReport(templateName, id) {
+  async function createReport(template, id) {
     const page = await browser.usePage();
-    await page.goto(`http://localhost:${port}/root/${templateName}?&id=${id}`);
+    await page.goto(`http://localhost:${port}/root/${template.name}?&id=${id}`);
     await page.waitForSelector(`.${layoutConfig.PAGE_CLASS}`);
     await page.waitForSelector(`.${layoutConfig.RENDERED_CHART_CLASS}`);
     const pageNumbers = await page.evaluate(PAGE_CLASS => {
@@ -33,7 +34,13 @@ function makeReportGenerator({ layoutConfig, browser, port }) {
       }
       return pageNumbers;
     }, layoutConfig.PAGE_CLASS);
-    const pdf = await createPdf(page, pageNumbers, layoutConfig.PAGE_CLASS, layoutConfig.PAGE_SCALE);
+    const pdf = await createPdf({
+      page,
+      pageNumbers,
+      PAGE_CLASS: layoutConfig.PAGE_CLASS,
+      PAGE_SCALE: layoutConfig.PAGE_SCALE || DEFAULT_PAGE_SCALE,
+      preferCSSPageSize: template.pageConfig && template.pageConfig.preferCSSPageSize
+    });
     await browser.releasePage(page);
     return pdf;
   }

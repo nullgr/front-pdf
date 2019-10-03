@@ -2,18 +2,18 @@ const puppeteer = require('puppeteer');
 const genericPool = require('generic-pool');
 const buildMakeBrowser = require('./browser');
 
-function launch({ layoutConfig, headless = true }) {
+function launch({ browserConfig, headless = true }) {
   const { width, height } = getDimentions(layoutConfig);
   const standartOptions = {
     headless,
-    handleSIGINT: false,
-    args: [`--window-size=${width},${height}`]
+    handleSIGINT: false
+    // args: [`--window-size=${width},${height}`]
   };
   const config =
     process.platform === 'linux'
       ? {
-          ...standartOptions,
-          args: [`--window-size=${width},${height}`]
+          ...standartOptions
+          // args: [`--window-size=${width},${height}`]
         }
       : standartOptions;
   return puppeteer.launch(config);
@@ -29,10 +29,10 @@ function createPool({ layoutConfig, browserInstance }) {
   const pageFacrory = {
     create: async function() {
       const page = await browserInstance.newPage();
-      page.setViewport({
-        width: width,
-        height: height
-      });
+      // page.setViewport({
+      //   width: width,
+      //   height: height
+      // });
       return page;
     },
     destroy: function(page) {

@@ -1,0 +1,2 @@
+curl -d '{"test": "TEST RESPONSE"}' -H "Content-Type: application/json" -X POST http://localhost:5000/createReport/template1 --create-dirs -o tests/output/output.pdf &
+curl -d '{"test": "CSS TEMPLATE"}' -H "Content-Type: application/json" -X POST http://localhost:5000/createReport/template-css --create-dirs -o tests/output/output2.pdf &

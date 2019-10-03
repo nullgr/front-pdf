@@ -9,19 +9,26 @@ startService({
     {
       name: 'template1',
       static: path.join(__dirname, './template1'),
-      index: path.join(__dirname, './template1/index.html')
+      index: path.join(__dirname, './template1/index.html'),
+      pageConfig: {
+        PAGE_CLASS: 'pdf-page',
+        RENDERED_CHART_CLASS: 'rendered',
+        preferCSSPageSize: true
+      }
+    },
+    {
+      name: 'template-css',
+      static: path.join(__dirname, './template-css'),
+      index: path.join(__dirname, './template-css/index.html'),
+      pageConfig: {
+        PAGE_CLASS: 'pdf-page',
+        RENDERED_CHART_CLASS: 'rendered',
+        preferCSSPageSize: true
+      }
     }
   ],
   payloadMock: mock,
   port: 5000,
-  layoutConfig: {
-    PAGE_HORIZONTAL_PADDING: 42.7,
-    PAGE_VERTICAL_PADDING: 42.7,
-    PAGE_INNER_WIDTH: 1180,
-    PAGE_INNER_HEIGHT: 1704,
-    PAGE_CLASS: 'pdf-page',
-    RENDERED_CHART_CLASS: 'rendered'
-  },
   debugMode: true,
   headless: true
 });
